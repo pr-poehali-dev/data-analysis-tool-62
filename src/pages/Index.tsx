@@ -1,4 +1,3 @@
-import { Shader, ChromaFlow, Swirl } from "shaders/react"
 import { CustomCursor } from "@/components/custom-cursor"
 import { GrainOverlay } from "@/components/grain-overlay"
 import { WorkSection } from "@/components/sections/work-section"
@@ -14,37 +13,11 @@ export default function Index() {
   const [isLoaded, setIsLoaded] = useState(false)
   const touchStartY = useRef(0)
   const touchStartX = useRef(0)
-  const shaderContainerRef = useRef<HTMLDivElement>(null)
   const scrollThrottleRef = useRef<number>()
 
   useEffect(() => {
-    const checkShaderReady = () => {
-      if (shaderContainerRef.current) {
-        const canvas = shaderContainerRef.current.querySelector("canvas")
-        if (canvas && canvas.width > 0 && canvas.height > 0) {
-          setIsLoaded(true)
-          return true
-        }
-      }
-      return false
-    }
-
-    if (checkShaderReady()) return
-
-    const intervalId = setInterval(() => {
-      if (checkShaderReady()) {
-        clearInterval(intervalId)
-      }
-    }, 100)
-
-    const fallbackTimer = setTimeout(() => {
-      setIsLoaded(true)
-    }, 1500)
-
-    return () => {
-      clearInterval(intervalId)
-      clearTimeout(fallbackTimer)
-    }
+    const timer = setTimeout(() => setIsLoaded(true), 100)
+    return () => clearTimeout(timer)
   }, [])
 
   const scrollToSection = (index: number) => {
@@ -176,37 +149,17 @@ export default function Index() {
       <GrainOverlay />
 
       <div
-        ref={shaderContainerRef}
         className={`fixed inset-0 z-0 transition-opacity duration-700 ${isLoaded ? "opacity-100" : "opacity-0"}`}
-        style={{ contain: "strict" }}
+        style={{
+          background: "linear-gradient(135deg, #0a1628 0%, #0d2444 25%, #1a1a3e 50%, #1c2a1c 75%, #0f1f0f 100%)",
+        }}
       >
-        <Shader className="h-full w-full">
-          <Swirl
-            colorA="#1275d8"
-            colorB="#e19136"
-            speed={0.8}
-            detail={0.8}
-            blend={50}
-            coarseX={40}
-            coarseY={40}
-            mediumX={40}
-            mediumY={40}
-            fineX={40}
-            fineY={40}
-          />
-          <ChromaFlow
-            baseColor="#0066ff"
-            upColor="#0066ff"
-            downColor="#d1d1d1"
-            leftColor="#e19136"
-            rightColor="#e19136"
-            intensity={0.9}
-            radius={1.8}
-            momentum={25}
-            maskType="alpha"
-            opacity={0.97}
-          />
-        </Shader>
+        <div
+          className="absolute inset-0"
+          style={{
+            background: "radial-gradient(ellipse at 20% 50%, rgba(18, 117, 216, 0.35) 0%, transparent 60%), radial-gradient(ellipse at 80% 20%, rgba(225, 145, 54, 0.25) 0%, transparent 55%), radial-gradient(ellipse at 60% 80%, rgba(18, 117, 216, 0.2) 0%, transparent 50%)",
+          }}
+        />
         <div className="absolute inset-0 bg-black/20" />
       </div>
 
